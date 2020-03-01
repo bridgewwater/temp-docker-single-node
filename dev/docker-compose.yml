@@ -1,0 +1,44 @@
+# copy right by sinlov at https://github.com/sinlov
+# Licenses http://www.apache.org/licenses/LICENSE-2.0
+# more info see https://docs.docker.com/compose/compose-file/
+version: '3'
+networks:
+  default:
+    # Use a custom driver
+    #driver: custom-driver-1
+services:
+  Dev-Demo-redis-permissions-fix: # https://hub.docker.com/r/bitnami/redis/
+    # use https://github.com/bitnami/bitnami-docker-mongodb/issues/103#issuecomment-424833086 fix ubunut error
+    container_name: 'Dev-Demo-redis-permissions-fix'
+    image: 'bitnami/redis:5.0.5'
+    user: root
+    command: chown -R 1001:1001 /bitnami
+    volumes:
+      - ./data/Demo-redis:/bitnami
+  Dev-Demo-redis:
+    container_name: 'Dev-Demo-redis'
+    image: 'bitnami/redis:5.0.5'
+    # for fix debian folder error
+    depends_on:
+      - Dev-Demo-redis-permissions-fix
+    # labels:
+    #   kompose.service.type: nodeport
+    ports:
+      - '40001:6379'
+    environment:
+      # ALLOW_EMPTY_PASSWORD is recommended only.
+      - ALLOW_EMPTY_PASSWORD=yes
+      # - REDIS_REPLICATION_MODE=slave
+      # - REDIS_PASSWORD=[pwd]
+      # - REDIS_MASTER_HOST=[pwd]
+      # - REDIS_MASTER_PORT_NUMBER=[pwd]
+      # - REDIS_MASTER_PASSWORD=[pwd]
+      - REDIS_EXTRA_FLAGS=--maxmemory 100mb
+    volumes:
+      - './data/Demo-redis:/bitnami/redis'
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+    restart: always # always, on-failure:3 or unless-stopped default "no" https://docs.docker.com/compose/compose-file/#restart
