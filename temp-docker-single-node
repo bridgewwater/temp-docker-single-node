@@ -22,6 +22,7 @@ ${shell_run_name} init management project.
 Example:
   ${shell_run_name} -i -r php-docker-base -f github.com/bridgewwater/php-docker-base -m dev-php-base -t Demo
   ${shell_run_name} -c -m dev-django-base -t Django
+  ${shell_run_name} -c -m dev-django-base -t ""  will remove tag
 
 Help:
   now use temple is ${temple_url}
@@ -33,7 +34,7 @@ Help:
   agrs:
 
   -m [dev] moudle name default is dev, new module must lower-case!
-  -t [Demo] tag of contains default is Demo, will change contain name
+  -t [Demo] tag of contains default is Demo, will change contain name, can empty
   -r root name of new proejct; only support mode -i
   -f full project name; only support mode -i
 HELP
@@ -136,7 +137,7 @@ do
         c ) # -c child mode this mode is default
             task_mode=0
         ;;
-        t ) # -t tag of contains default is Demo
+        t ) # -t [Demo] tag of contains default is Demo, will change contain name, can empty
             new_module_tag=${OPTARG}
         ;;
         m ) # -m moudle name default is Dev
@@ -158,24 +159,24 @@ do
     esac
 done
 
-echo -e "agrs=>
-task_mode   -> ${task_mode}
-new_project -> ${new_project}
-new_package_name -> ${new_package_name}
-new_module_name -> ${new_module_name}
-new_module_tag -> ${new_module_tag}
-"
+# echo -e "agrs=>
+# task_mode   -> ${task_mode}
+# new_project -> ${new_project}
+# new_package_name -> ${new_package_name}
+# new_module_name -> ${new_module_name}
+# new_module_tag -> ${new_module_tag}
+# "
 
 case ${task_mode} in
     1 )
         # pD "task mode init project"
         if [ ! -n "${new_project}" ]; then
-            echo -e "\033[;31mError you must set new_project at first!\033[0m"
+            echo -e "\033[;31mError you must set new project root by -r first!\033[0m"
             exit 1
         fi
 
         if [ ! -n "${new_package_name}" ]; then
-            echo -e "\033[;31mError you must set new_package_name at first!\033[0m"
+            echo -e "\033[;31mError you must set full packge name by -f at first!\033[0m"
             exit 1
         fi
 
@@ -196,22 +197,34 @@ case ${task_mode} in
             find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_name}#${new_project}#g" {}
             find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${replace_full_pkg_name_from}#${replace_full_pkg_name_to}#g" {}
             find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
-            find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
             find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
             find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
-            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
             find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}-#${new_module_name}-#g" {}
-            find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+            if [[ ! -n "${new_module_tag}" ]];then
+                find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}##g" {}
+                find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}##g" {}
+                find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-##g" {}
+            else
+                find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
+                find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
+                find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+            fi
         else
             find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_name}#${new_project}#g" {}
             find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${replace_full_pkg_name_from}#${replace_full_pkg_name_to}#g" {}
             find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
-            find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
             find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
             find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
-            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
             find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_name}-#${new_module_name}-#g" {}
-            find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+            if [[ ! -n "${new_module_tag}" ]];then
+                find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}##g" {}
+                find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}##g" {}
+                find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-##g" {}
+            else
+                find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
+                find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
+                find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+            fi
         fi
         mv ${new_project}/${temple_module_name} ${new_project}/${new_module_name}
         if [[ -f ${new_project}/temp-docker-single-node ]];then
@@ -225,13 +238,18 @@ case ${task_mode} in
         # pD "check in docker management project"
 
         if [[ ! -d ".git" ]];then
-            echo -e "\033[;31mError you must let docker management project under git manamgent\033[0m"
+            echo -e "\033[;31mError you must let docker management project under git manamgent fix [ git init ]\033[0m"
+            exit 1
+        fi
+        if [ ! -n "${new_module_name}" ]; then
+            echo -e "\033[;31mError you must set module name by -m at first!\033[0m"
             exit 1
         fi
         if [[ -d "${new_module_name}" ]];then
             echo -e "\033[;31mError you want new module is exist -> ${new_module_name}\033[0m"
             exit 1
         fi
+
         echo -e "\033[;34mClone from ${temple_url}\033[0m"
         if [[ -d "${temp_build_path_module}" ]];then
           rm -rf "${temp_build_path_module}"
@@ -243,15 +261,25 @@ case ${task_mode} in
         if [[ ${release}=="Darwin" ]];then
           find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
           find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
-          find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
           find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}-#${new_module_name}-#g" {}
-          find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+          if [[ ! -n "${new_module_tag}" ]];then
+            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}##g" {}
+            find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-##g" {}
+          else
+            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
+            find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+          fi
         else
           find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
           find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
-          find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
           find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_name}-#${new_module_name}-#g" {}
-          find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+          if [[ ! -n "${new_module_tag}" ]];then
+            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}##g" {}
+            find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-##g" {}
+          else
+            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
+            find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+          fi
         fi
         cd ../../
         mv ${temp_build_path_module}/${temple_module_name} ${temp_build_path_module}/${new_module_name}
