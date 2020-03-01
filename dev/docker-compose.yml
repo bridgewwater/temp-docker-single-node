@@ -36,9 +36,9 @@ services:
       - REDIS_EXTRA_FLAGS=--maxmemory 100mb
     volumes:
       - './data/Demo-redis:/bitnami/redis'
-    ulimits:
-      nproc: 65535
-      nofile:
-        soft: 20000
-        hard: 40000
+    # ulimits:
+    #   nproc: 65535
+    #   nofile:
+    #     soft: 20000
+    #     hard: 40000
     restart: always # always, on-failure:3 or unless-stopped default "no" https://docs.docker.com/compose/compose-file/#restart

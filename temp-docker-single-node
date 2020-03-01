@@ -1,0 +1,268 @@
+#!/usr/bin/env bash
+
+shell_run_path=$(cd `dirname $0`; pwd)
+shell_run_name=$(basename $0)
+
+#temple url
+temple_url="https://github.com/bridgewwater/temp-docker-single-node.git"
+temple_name="temp-docker-single-node"
+temple_module_name="dev"
+temple_module_tag="Demo"
+replace_full_pkg_name_from="github.com/bridgewwater/temp-goadmin-gin"
+replace_full_pkg_name_to=""
+temp_build_path_module="build/tmp"
+
+function Usage(){
+cat << HELP
+
+Usage: ${shell_run_name} [nowPkg] [fullPackageName]
+
+${shell_run_name} init management project.
+
+Example:
+  ${shell_run_name} -i -r php-docker-base -f github.com/bridgewwater/php-docker-base -m dev-php-base -t Demo
+  ${shell_run_name} -c -m dev-django-base -t Django
+
+Help:
+  now use temple is ${temple_url}
+  this cli has mode -c and -i
+
+  mode:
+  -c child mode this mode is default, this mode will add module at docker management project.
+  -i init mode this mod will use -r -f , this mode use to init docker management project.
+  agrs:
+
+  -m [dev] moudle name default is dev, new module must lower-case!
+  -t [Demo] tag of contains default is Demo, will change contain name
+  -r root name of new proejct; only support mode -i
+  -f full project name; only support mode -i
+HELP
+}
+
+ARG=$1
+if [[ "$ARG" =~ "-h" ]];then
+    Usage
+    exit 0
+fi
+
+pV(){
+    echo -e "\033[;36m$1\033[0m"
+}
+pI(){
+    echo -e "\033[;32m$1\033[0m"
+}
+pD(){
+    echo -e "\033[;34m$1\033[0m"
+}
+pW(){
+    echo -e "\033[;33m$1\033[0m"
+}
+pE(){
+    echo -e "\033[;31m$1\033[0m"
+}
+
+stringLowerCase(){
+    if [ ! -n $1 ];then
+        echo ""
+    else
+        echo $1 | tr '[A-Z]' '[a-z]'
+    fi
+}
+
+checkFuncBack(){
+    if [ ! $? -eq 0 ]; then
+        echo -e "\033[;31mRun [ $1 ] error exit code 1\033[0m"
+        exit 1
+        # else
+        #   echo -e "\033[;30mRun [ $1 ] success\033[0m"
+    fi
+}
+
+checkEnv(){
+    evn_checker=`which $1`
+    checkFuncBack "which $1"
+    if [ ! -n "evn_checker" ]; then
+        echo -e "\033[;31mCheck event [ $1 ] error exit\033[0m"
+        exit 1
+        # else
+        #   echo -e "\033[;32mCli [ $1 ] event check success\033[0m\n-> \033[;34m$1 at Path: ${evn_checker}\033[0m"
+    fi
+}
+
+release="unix"
+bit=""
+check_sys(){
+    case "`uname`" in
+        Darwin* )
+            release="Darwin"
+        ;;
+        *)
+            if [[ -f /etc/redhat-release ]]; then
+                release="centos"
+                elif cat /etc/issue | grep -q -E -i "debian"; then
+                release="debian"
+                elif cat /etc/issue | grep -q -E -i "ubuntu"; then
+                release="ubuntu"
+                elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat"; then
+                release="centos"
+                elif cat /proc/version | grep -q -E -i "debian"; then
+                release="debian"
+                elif cat /proc/version | grep -q -E -i "ubuntu"; then
+                release="ubuntu"
+                elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
+                release="centos"
+            fi
+        ;;
+    esac
+    bit=`uname -m`
+}
+check_sys
+
+checkEnv git
+
+if [[ $# -lt 2 ]];then
+    echo -e "\033[;31mCLI error!\033[0m see ${shell_run_name} -h"
+    exit 1
+fi
+
+task_mode=0
+new_project=""
+new_package_name=""
+new_module_name="dev"
+new_module_tag="Demo"
+while getopts "icr:f:m:t:" arg #after param has ":" need option
+do
+    case $arg in
+        c ) # -c child mode this mode is default
+            task_mode=0
+        ;;
+        t ) # -t tag of contains default is Demo
+            new_module_tag=${OPTARG}
+        ;;
+        m ) # -m moudle name default is Dev
+            new_module_name=$(stringLowerCase ${OPTARG})
+        ;;
+        i ) # -i init mode this mod will use -p -f
+            task_mode=1
+        ;;
+        r ) # -r root name of new proejct; only support mode -i
+            new_project=${OPTARG}
+        ;;
+        f ) # -f full project name; only support -i
+            new_package_name=${OPTARG}
+        ;;
+        ? )  # other param?
+            echo "unkonw argument, plase use -h to show help"
+            exit 1
+        ;;
+    esac
+done
+
+echo -e "agrs=>
+task_mode   -> ${task_mode}
+new_project -> ${new_project}
+new_package_name -> ${new_package_name}
+new_module_name -> ${new_module_name}
+new_module_tag -> ${new_module_tag}
+"
+
+case ${task_mode} in
+    1 )
+        # pD "task mode init project"
+        if [ ! -n "${new_project}" ]; then
+            echo -e "\033[;31mError you must set new_project at first!\033[0m"
+            exit 1
+        fi
+
+        if [ ! -n "${new_package_name}" ]; then
+            echo -e "\033[;31mError you must set new_package_name at first!\033[0m"
+            exit 1
+        fi
+
+        if [ -d ${new_project} ]; then
+            echo -e "\033[;31mError want new project is exist -> ${new_project}\033[0m"
+            exit 1
+        fi
+        echo -e "=> temple ${temple_name}"
+        echo -e "\033[;34mClone from ${temple_url}\033[0m"
+        git clone --depth 1 ${temple_url} ${new_project}
+        cd ${new_project}
+        rm -rf .git/
+        sleep 1
+        cd ..
+        replace_full_pkg_name_to=${new_package_name}
+        echo "-> in OS ${release}_${bit}. Use sed replace from ${replace_full_pkg_name_from} to ${replace_full_pkg_name_to}"
+        if [[ ${release}=="Darwin" ]];then
+            find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_name}#${new_project}#g" {}
+            find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${replace_full_pkg_name_from}#${replace_full_pkg_name_to}#g" {}
+            find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
+            find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
+            find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
+            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
+            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
+            find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}-#${new_module_name}-#g" {}
+            find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+        else
+            find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_name}#${new_project}#g" {}
+            find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${replace_full_pkg_name_from}#${replace_full_pkg_name_to}#g" {}
+            find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
+            find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
+            find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
+            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
+            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
+            find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_name}-#${new_module_name}-#g" {}
+            find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+        fi
+        mv ${new_project}/${temple_module_name} ${new_project}/${new_module_name}
+        if [[ -f ${new_project}/temp-docker-single-node ]];then
+          rm -f ${new_project}/temp-docker-single-node
+        fi
+        new_project="$(pwd)/${new_project}"
+        echo -e "Finish make ${temple_name} project => \033[;32m${new_project}\033[0m"
+    ;;
+    0 )
+        # pD "task mode add module"
+        # pD "check in docker management project"
+
+        if [[ ! -d ".git" ]];then
+            echo -e "\033[;31mError you must let docker management project under git manamgent\033[0m"
+            exit 1
+        fi
+        if [[ -d "${new_module_name}" ]];then
+            echo -e "\033[;31mError you want new module is exist -> ${new_module_name}\033[0m"
+            exit 1
+        fi
+        echo -e "\033[;34mClone from ${temple_url}\033[0m"
+        if [[ -d "${temp_build_path_module}" ]];then
+          rm -rf "${temp_build_path_module}"
+        fi
+        git clone --depth 1 ${temple_url} ${temp_build_path_module}
+        cd ${temp_build_path_module}
+        rm -rf .git/
+        sleep 1
+        if [[ ${release}=="Darwin" ]];then
+          find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
+          find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
+          find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
+          find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}-#${new_module_name}-#g" {}
+          find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+        else
+          find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
+          find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
+          find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
+          find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_name}-#${new_module_name}-#g" {}
+          find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+        fi
+        cd ../../
+        mv ${temp_build_path_module}/${temple_module_name} ${temp_build_path_module}/${new_module_name}
+        mv ${temp_build_path_module}/${new_module_name} ./
+        rm -rf ${temp_build_path_module}
+        echo -e "Finish add module ${new_module_name}\033[0m"
+    ;;
+    *)
+        pE "Not suport task mode: ${task_mode}, please check"
+        exit 1
+    ;;
+esac
+
+exit 0

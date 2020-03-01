@@ -5,21 +5,21 @@ ROOT_LOG_PATH ?= ./log
 checkLogPath:
 	@if [ ! -d ${ROOT_LOG_PATH} ]; then mkdir -p ${ROOT_LOG_PATH} && echo "~> mkdir ${ROOT_LOG_PATH}"; fi
 
-devDockerCheck:
+dev-dockerCheck:
 	docker-compose config -q
 
-devDockerRun:
+dev-dockerRun:
 	bash ./maintain.sh
 
-devDockerStop:
+dev-dockerStop:
 	docker-compose stop
 
-devDockerRemove:
+dev-dockerRemove:
 	bash ./remove.sh
 
 helpDev:
-	@echo "make devDockerCheck     -> check docker-compose"
-	@echo "make devDockerRun       -> run as ./maintain.sh"
-	@echo "make devDockerStop      -> stop this foler docker-compose"
-	@echo "make devDockerRemove    -> run as ./remove.sh"
+	@echo "make dev-dockerCheck     -> check docker-compose"
+	@echo "make dev-dockerRun       -> run as ./maintain.sh"
+	@echo "make dev-dockerStop      -> stop this foler docker-compose"
+	@echo "make dev-dockerRemove    -> run as ./remove.sh"
 	@echo ""

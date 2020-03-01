@@ -8,23 +8,23 @@ TOP_DIR := $(shell pwd)
 
 INFO_FIRST_ROOT ?= dev
 
-devDockerCheck:
-	cd ./$(INFO_FIRST_ROOT) && make devDockerCheck
+dev-dockerCheck:
+	cd ./$(INFO_FIRST_ROOT) && make dev-dockerCheck
 
-devDockerRun:
-	cd ./$(INFO_FIRST_ROOT) && make devDockerRun
+dev-dockerRun:
+	cd ./$(INFO_FIRST_ROOT) && make dev-dockerRun
 
-devDockerStop:
-	cd ./$(INFO_FIRST_ROOT) && make devDockerStop
+dev-dockerStop:
+	cd ./$(INFO_FIRST_ROOT) && make dev-dockerStop
 
-devDockerRemove:
-	cd ./$(INFO_FIRST_ROOT) && make devDockerRemove
+dev-dockerRemove:
+	cd ./$(INFO_FIRST_ROOT) && make dev-dockerRemove
 
 help:
-	@echo "make devDockerCheck     -> to folder $(INFO_FIRST_ROOT)"
-	@echo "make devDockerRun       -> to folder $(INFO_FIRST_ROOT)"
-	@echo "make devDockerStop      -> to folder $(INFO_FIRST_ROOT)"
-	@echo "make devDockerRemove    -> to folder $(INFO_FIRST_ROOT)"
+	@echo "make dev-dockerCheck     -> to folder $(INFO_FIRST_ROOT)"
+	@echo "make dev-dockerRun       -> to folder $(INFO_FIRST_ROOT)"
+	@echo "make dev-dockerStop      -> to folder $(INFO_FIRST_ROOT)"
+	@echo "make dev-dockerRemove    -> to folder $(INFO_FIRST_ROOT)"
 	@echo ""
 	@echo "other env cd to foder use [ make help ] to see"
 	@echo "more info see Makefile code"
