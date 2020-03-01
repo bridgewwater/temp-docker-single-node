@@ -4,8 +4,8 @@
 
 # set remove contain
 remove_contain_list=(
-  Dev-Demo-redis-permissions-fix
-  Dev-Demo-redis
+  dev-Demo-redis-permissions-fix
+  dev-Demo-redis
 )
 remove_network_list=(
   dev_default

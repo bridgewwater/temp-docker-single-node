@@ -29,14 +29,14 @@ checkFuncBack "docker-compose up -d --remove-orphans"
 
 # stop
 pW "\nStop some contain start"
-# dockerStopContainWhenRunning Dev-Demo-redis
-# checkFuncBack "dockerStopContainWhenRunning Dev-Demo-redis"
+# dockerStopContainWhenRunning dev-Demo-redis
+# checkFuncBack "dockerStopContainWhenRunning dev-Demo-redis"
 pW "\nStop some contain end"
 
 # restart
 pW "\nRestart some contain start"
-# dockerRestartContainWhenRunning Dev-Demo-redis
-# checkFuncBack "dockerRestartContainWhenRunning Dev-Demo-redis"
+# dockerRestartContainWhenRunning dev-Demo-redis
+# checkFuncBack "dockerRestartContainWhenRunning dev-Demo-redis"
 pW "\nRestart some contain end"
 
 pI "\n=> maintain docker at $(pwd) finish"
