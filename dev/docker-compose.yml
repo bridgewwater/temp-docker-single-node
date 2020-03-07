@@ -14,7 +14,7 @@ services:
     user: root
     command: chown -R 1001:1001 /bitnami
     volumes:
-      - ./data/Demo-redis:/bitnami
+      - ./data/dev-Demo-redis:/bitnami
   dev-Demo-redis:
     container_name: 'dev-Demo-redis'
     image: 'bitnami/redis:5.0.5'
@@ -35,7 +35,7 @@ services:
       # - REDIS_MASTER_PASSWORD=[pwd]
       - REDIS_EXTRA_FLAGS=--maxmemory 100mb
     volumes:
-      - './data/Demo-redis:/bitnami/redis'
+      - './data/dev-Demo-redis:/bitnami/redis'
     # ulimits:
     #   nproc: 65535
     #   nofile:
