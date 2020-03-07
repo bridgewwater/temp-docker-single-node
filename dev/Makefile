@@ -2,24 +2,30 @@
 
 ROOT_LOG_PATH ?= ./log
 
+INFO-dev-ROOT := $(shell if [ ! -n "${TOP_DIR}" ]; then echo "." ; else echo "${TOP_DIR}/dev" ; fi)
+
 checkLogPath:
 	@if [ ! -d ${ROOT_LOG_PATH} ]; then mkdir -p ${ROOT_LOG_PATH} && echo "~> mkdir ${ROOT_LOG_PATH}"; fi
 
-dev-dockerCheck:
-	docker-compose config -q
+dev-docker-check:
+	cd $(INFO-dev-ROOT) && docker-compose config -q
 
-dev-dockerRun:
-	bash ./maintain.sh
+dev-docker-run:
+	cd $(INFO-dev-ROOT) && bash ./maintain.sh
 
-dev-dockerStop:
-	docker-compose stop
+dev-docker-stop:
+	cd $(INFO-dev-ROOT) && docker-compose stop
 
-dev-dockerRemove:
-	bash ./remove.sh
+dev-docker-restart:
+	cd $(INFO-dev-ROOT) && docker-compose restart
 
-helpDev:
-	@echo "make dev-dockerCheck     -> check docker-compose"
-	@echo "make dev-dockerRun       -> run as ./maintain.sh"
-	@echo "make dev-dockerStop      -> stop this foler docker-compose"
-	@echo "make dev-dockerRemove    -> run as ./remove.sh"
+dev-docker-Remove:
+	cd $(INFO-dev-ROOT) && bash ./remove.sh
+
+help-dev:
+	@echo "make dev-docker-check     -> check docker-compose"
+	@echo "make dev-docker-run       -> run as $(INFO-dev-ROOT)/maintain.sh"
+	@echo "make dev-docker-stop      -> stop foler $(INFO-dev-ROOT) docker-compose"
+	@echo "make dev-docker-restart   -> restart foler $(INFO-dev-ROOT) docker-compose"
+	@echo "make dev-docker-Remove    -> run as $(INFO-dev-ROOT)/remove.sh"
 	@echo ""

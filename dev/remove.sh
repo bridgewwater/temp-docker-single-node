@@ -6,6 +6,7 @@
 remove_contain_list=(
   dev-Demo-redis-permissions-fix
   dev-Demo-redis
+  dev-Demo-nginx
 )
 remove_network_list=(
   dev_default
