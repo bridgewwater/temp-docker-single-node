@@ -5,7 +5,7 @@ INFO-dev-ROOT := $(shell if [ ! -n "${TOP_DIR}" ]; then echo "." ; else echo "${
 dev-docker-check:
 	cd $(INFO-dev-ROOT) && docker-compose config -q
 
-dev-docker-run:
+dev-docker-up:
 	cd $(INFO-dev-ROOT) && bash ./maintain.sh
 
 dev-docker-stop:
@@ -19,7 +19,7 @@ dev-docker-Remove:
 
 help-dev:
 	@echo "make dev-docker-check     -> check docker-compose"
-	@echo "make dev-docker-run       -> run as $(INFO-dev-ROOT)/maintain.sh"
+	@echo "make dev-docker-up        -> update as $(INFO-dev-ROOT)/maintain.sh"
 	@echo "make dev-docker-stop      -> stop foler $(INFO-dev-ROOT) docker-compose"
 	@echo "make dev-docker-restart   -> restart foler $(INFO-dev-ROOT) docker-compose"
 	@echo "make dev-docker-Remove    -> run as $(INFO-dev-ROOT)/remove.sh"
