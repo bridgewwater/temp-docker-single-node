@@ -1,11 +1,6 @@
 .PHONY: test check clean build dist all
 
-ROOT_LOG_PATH ?= ./log
-
 INFO-dev-ROOT := $(shell if [ ! -n "${TOP_DIR}" ]; then echo "." ; else echo "${TOP_DIR}/dev" ; fi)
-
-checkLogPath:
-	@if [ ! -d ${ROOT_LOG_PATH} ]; then mkdir -p ${ROOT_LOG_PATH} && echo "~> mkdir ${ROOT_LOG_PATH}"; fi
 
 dev-docker-check:
 	cd $(INFO-dev-ROOT) && docker-compose config -q

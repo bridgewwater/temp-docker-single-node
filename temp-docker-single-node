@@ -10,7 +10,8 @@ temple_module_name="dev"
 temple_module_tag="Demo"
 replace_full_pkg_name_from="github.com/bridgewwater/temp-goadmin-gin"
 replace_full_pkg_name_to=""
-temp_build_path_module="build/tmp"
+temp_build_path="tmp"
+temp_build_path_module="${temp_build_path}/mock"
 
 function Usage(){
 cat << HELP
@@ -200,14 +201,17 @@ case ${task_mode} in
             find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
             find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
             find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}-#${new_module_name}-#g" {}
+            find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}-#${new_module_name}-#g" {}
             if [[ ! -n "${new_module_tag}" ]];then
-                find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}##g" {}
-                find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}##g" {}
+                find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-##g" {}
+                find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-##g" {}
                 find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-##g" {}
+                find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-##g" {}
             else
                 find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
                 find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
                 find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+                find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-#${new_module_tag}-#g" {}
             fi
         else
             find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_name}#${new_project}#g" {}
@@ -216,13 +220,16 @@ case ${task_mode} in
             find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
             find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
             find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_name}-#${new_module_name}-#g" {}
+            find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "s#${temple_module_name}-#${new_module_name}-#g" {}
             if [[ ! -n "${new_module_tag}" ]];then
-                find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}##g" {}
-                find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}##g" {}
+                find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-##g" {}
+                find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-##g" {}
                 find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-##g" {}
+                find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-##g" {}
             else
                 find ./${new_project} -name "*.md" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
                 find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
+                find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-#${new_module_tag}-#g" {}
                 find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-#${new_module_tag}-#g" {}
             fi
         fi
@@ -262,29 +269,35 @@ case ${task_mode} in
           find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
           find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}#${new_module_name}#g" {}
           find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}-#${new_module_name}-#g" {}
+          find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "" "s#${temple_module_name}-#${new_module_name}-#g" {}
           if [[ ! -n "${new_module_tag}" ]];then
-            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}##g" {}
+            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-##g" {}
             find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-##g" {}
+            find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-##g" {}
           else
             find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}#${new_module_tag}#g" {}
             find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+            find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "" "s#${temple_module_tag}-#${new_module_tag}-#g" {}
           fi
         else
           find ./${new_project} -name "Makefile" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
           find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_name}#${new_module_name}#g" {}
           find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_name}-#${new_module_name}-#g" {}
+          find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "s#${temple_module_name}-#${new_module_name}-#g" {}
           if [[ ! -n "${new_module_tag}" ]];then
-            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}##g" {}
+            find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-##g" {}
             find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-##g" {}
+            find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-##g" {}
           else
             find ./${new_project} -name "*.sh" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}#${new_module_tag}#g" {}
             find ./${new_project} -name "*.yml" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-#${new_module_tag}-#g" {}
+            find ./${new_project} -name ".gitignore" | xargs -n 1 -I {} sed -i "s#${temple_module_tag}-#${new_module_tag}-#g" {}
           fi
         fi
         cd ../../
         mv ${temp_build_path_module}/${temple_module_name} ${temp_build_path_module}/${new_module_name}
         mv ${temp_build_path_module}/${new_module_name} ./
-        rm -rf ${temp_build_path_module}
+        rm -rf ${temp_build_path}
         echo -e "Finish add module ${new_module_name}\033[0m"
     ;;
     *)
