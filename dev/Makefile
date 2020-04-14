@@ -15,12 +15,13 @@ dev-docker-restart:
 	cd $(INFO-dev-ROOT) && docker-compose restart
 
 dev-docker-Remove:
-	cd $(INFO-dev-ROOT) && bash ./remove.sh
+	cd $(INFO-dev-ROOT) && docker-compose rm -s -f -v
+	# can change this for more biz: cd $(INFO-dev-ROOT) && bash ./remove.sh
 
 help-dev:
 	@echo "make dev-docker-check     -> check docker-compose"
 	@echo "make dev-docker-up        -> update as $(INFO-dev-ROOT)/maintain.sh"
 	@echo "make dev-docker-stop      -> stop foler $(INFO-dev-ROOT) docker-compose"
 	@echo "make dev-docker-restart   -> restart foler $(INFO-dev-ROOT) docker-compose"
-	@echo "make dev-docker-Remove    -> run as $(INFO-dev-ROOT)/remove.sh"
+	@echo "make dev-docker-Remove    -> remove as $(INFO-dev-ROOT) docker-compose"
 	@echo ""
